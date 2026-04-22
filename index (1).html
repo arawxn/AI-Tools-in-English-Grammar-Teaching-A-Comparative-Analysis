@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Grammar Study / Исследование ИИ-инструментов</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a18;
+    --ink-soft: #3d3d38;
+    --ink-faint: #7a7a72;
+    --paper: #f5f3ee;
+    --paper-warm: #ede9e0;
+    --rule: #c8c4b8;
+    --accent: #2a4a6b;
+    --accent-light: #e8eef5;
+    --gold: #8b6914;
+    --gold-light: #f5edd8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4rem;
+    height: 56px;
+  }
+
+  .nav-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  .lang-toggle {
+    display: flex;
+    gap: 0.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+  }
+
+  .lang-btn {
+    background: none;
+    border: 1px solid var(--rule);
+    padding: 3px 10px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    transition: all 0.2s;
+  }
+
+  .lang-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 140px 0 80px;
+    max-width: 860px;
+    margin: 0 auto;
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .hero-label::after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 60px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 2rem;
+    color: var(--ink);
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    max-width: 620px;
+    margin-bottom: 3rem;
+    line-height: 1.8;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .meta-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+  }
+
+  .meta-item span {
+    display: block;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    font-size: 12px;
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* ── SECTION ── */
+  section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 5rem 4rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: var(--ink-soft);
+  }
+
+  p { margin-bottom: 1.2rem; color: var(--ink-soft); }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── CRITERIA GRID ── */
+  .criteria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-top: 2.5rem;
+  }
+
+  .criterion-card {
+    background: var(--paper);
+    padding: 1.5rem;
+    transition: background 0.2s;
+  }
+
+  .criterion-card:hover { background: var(--paper-warm); }
+
+  .criterion-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .criterion-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+
+  .criterion-desc {
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    line-height: 1.5;
+  }
+
+  /* ── SCORE TABLE ── */
+  .table-wrapper {
+    overflow-x: auto;
+    margin-top: 2rem;
+  }
+
+  .score-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .score-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 400;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 2px solid var(--rule);
+    white-space: nowrap;
+  }
+
+  .score-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+
+  .score-table tr:last-child td { border-bottom: none; }
+
+  .score-table .ai-name {
+    font-weight: 500;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .score-cell {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .score-full { color: var(--ink-soft); }
+  .score-reduced { color: var(--rule); }
+  .score-total {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  .note-cell {
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+    line-height: 1.5;
+  }
+
+  /* ── RANKINGS ── */
+  .rankings {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .rank-row {
+    display: grid;
+    grid-template-columns: 3rem 1fr 6rem 8rem;
+    align-items: center;
+    background: var(--paper);
+    padding: 1.2rem 1.5rem;
+    gap: 1.5rem;
+    transition: background 0.2s;
+  }
+
+  .rank-row:hover { background: var(--paper-warm); }
+
+  .rank-row.rank-1 { background: var(--gold-light); }
+  .rank-row.rank-1:hover { background: #f0e6c8; }
+
+  .rank-position {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    color: var(--rule);
+    font-weight: 300;
+  }
+
+  .rank-row.rank-1 .rank-position { color: var(--gold); }
+
+  .rank-ai {
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+
+  .rank-score {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .rank-bar-wrap {
+    height: 4px;
+    background: var(--rule);
+  }
+
+  .rank-bar {
+    height: 100%;
+    background: var(--accent);
+    transition: width 1s ease;
+  }
+
+  .rank-row.rank-1 .rank-bar { background: var(--gold); }
+
+  /* ── FINDINGS ── */
+  .findings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .finding-item {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .finding-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    padding-top: 4px;
+  }
+
+  .finding-text {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  .finding-text strong { color: var(--ink); font-weight: 600; }
+
+  /* ── TOPICS COVERED ── */
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-top: 2rem;
+  }
+
+  .topic-card {
+    background: var(--paper);
+    padding: 1.5rem;
+  }
+
+  .topic-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .topic-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 3rem 4rem;
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    line-height: 1.8;
+  }
+
+  /* ── LANG SWITCH ── */
+  /* Block elements: EN hidden by default */
+  [data-lang="en"] { display: none; }
+  body.en [data-lang="ru"] { display: none; }
+  body.en [data-lang="en"] { display: block; }
+
+  /* Inline spans */
+  span[data-lang="en"] { display: none; }
+  body.en span[data-lang="ru"] { display: none; }
+  body.en span[data-lang="en"] { display: inline; }
+
+  /* ── ANIMATE ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero { animation: fadeUp 0.7s ease both; }
+  section { animation: fadeUp 0.6s ease both; animation-play-state: paused; }
+  section.visible { animation-play-state: running; }
+
+  @media (max-width: 700px) {
+    nav { padding: 0 1.5rem; }
+    section, .hero, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .rank-row { grid-template-columns: 2.5rem 1fr 5rem; }
+    .rank-bar-wrap { display: none; }
+    .nav-links { display: none; }
+    .hero-meta { flex-wrap: wrap; gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <span data-lang="ru">Научное исследование · 2025</span>
+    <span data-lang="en">Research Study · 2025</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#methodology"><span data-lang="ru">Методология</span><span data-lang="en">Methodology</span></a></li>
+    <li><a href="#results"><span data-lang="ru">Результаты</span><span data-lang="en">Results</span></a></li>
+    <li><a href="#findings"><span data-lang="ru">Выводы</span><span data-lang="en">Findings</span></a></li>
+  </ul>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">
+    <span data-lang="ru">Сравнительное исследование</span>
+    <span data-lang="en">Comparative Study</span>
+  </div>
+
+  <h1>
+    <span data-lang="ru"><em>ИИ-инструменты</em> в обучении английской грамматике: сравнительный анализ</span>
+    <span data-lang="en"><em>AI Tools</em> in English Grammar Teaching: A Comparative Analysis</span>
+  </h1>
+
+  <p class="hero-subtitle">
+    <span data-lang="ru">Исследование оценивает качество грамматических объяснений пяти крупнейших языковых моделей — ChatGPT, DeepSeek, Gemini, Claude и Perplexity — по пяти дидактическим критериям на уровне B1.</span>
+    <span data-lang="en">This study evaluates the quality of grammar explanations produced by five leading language models — ChatGPT, DeepSeek, Gemini, Claude, and Perplexity — across five didactic criteria at the B1 proficiency level.</span>
+  </p>
+
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span data-lang="ru">МОДЕЛЕЙ</span>
+      <span data-lang="en">MODELS</span>
+      <span>5</span>
+    </div>
+    <div class="meta-item">
+      <span data-lang="ru">ГРАММАТИЧЕСКИХ ТЕМ</span>
+      <span data-lang="en">GRAMMAR TOPICS</span>
+      <span>5</span>
+    </div>
+    <div class="meta-item">
+      <span data-lang="ru">КРИТЕРИЕВ ОЦЕНКИ</span>
+      <span data-lang="en">EVALUATION CRITERIA</span>
+      <span>5</span>
+    </div>
+    <div class="meta-item">
+      <span data-lang="ru">УРОВЕНЬ</span>
+      <span data-lang="en">CEFR LEVEL</span>
+      <span>B1</span>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- METHODOLOGY -->
+<section id="methodology">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2><span data-lang="ru">Методология</span><span data-lang="en">Methodology</span></h2>
+  </div>
+
+  <p>
+    <span data-lang="ru">Каждая из пяти языковых моделей получала идентичные запросы на объяснение грамматических тем уровня B1. Ответы оценивались по пятикомпонентной шкале (максимум 10 баллов за тему: по 2 балла за каждый критерий).</span>
+    <span data-lang="en">Each of the five language models received identical prompts requesting explanations of B1-level grammar topics. Responses were evaluated on a ten-point scale using five components (2 points per criterion, 5 criteria per topic).</span>
+  </p>
+
+  <p>
+    <span data-lang="ru">Темы охватывают ключевые грамматические конструкции, типичные для учебных программ уровня B1 по стандарту CEFR, опираясь на методологическую базу учебника Р. Мёрфи <em>English Grammar in Use</em>.</span>
+    <span data-lang="en">Topics cover key grammar structures typical of B1-level syllabi under the CEFR framework, with methodological reference to R. Murphy's <em>English Grammar in Use</em>.</span>
+  </p>
+
+  <div class="topics-grid">
+    <div class="topic-card">
+      <div class="topic-label">Topic 1</div>
+      <div class="topic-name">Present Perfect</div>
+    </div>
+    <div class="topic-card">
+      <div class="topic-label">Topic 2</div>
+      <div class="topic-name">Reported Speech</div>
+    </div>
+    <div class="topic-card">
+      <div class="topic-label">Topic 3</div>
+      <div class="topic-name">Passive Voice</div>
+    </div>
+    <div class="topic-card">
+      <div class="topic-label">Topic 4</div>
+      <div class="topic-name">Conditionals (If / Wish)</div>
+    </div>
+    <div class="topic-card">
+      <div class="topic-label">Topic 5</div>
+      <div class="topic-name">Modal Verbs: Can / Could / Be Able To</div>
+    </div>
+  </div>
+
+  <div class="criteria-grid" style="margin-top: 3rem;">
+    <div class="criterion-card">
+      <div class="criterion-num">C — 01</div>
+      <div class="criterion-title"><span data-lang="ru">Понятность объяснения</span><span data-lang="en">Clarity of Explanation</span></div>
+      <div class="criterion-desc"><span data-lang="ru">Соответствие лексики и синтаксиса уровню B1</span><span data-lang="en">Vocabulary and syntax appropriate to B1 level</span></div>
+    </div>
+    <div class="criterion-card">
+      <div class="criterion-num">C — 02</div>
+      <div class="criterion-title"><span data-lang="ru">Точность структур</span><span data-lang="en">Accuracy of Grammatical Structures</span></div>
+      <div class="criterion-desc"><span data-lang="ru">Корректность формул для утвердительных, отрицательных и вопросительных предложений</span><span data-lang="en">Correctness of formulas for affirmative, negative, and interrogative sentences</span></div>
+    </div>
+    <div class="criterion-card">
+      <div class="criterion-num">C — 03</div>
+      <div class="criterion-title"><span data-lang="ru">Примеры</span><span data-lang="en">Examples</span></div>
+      <div class="criterion-desc"><span data-lang="ru">Наличие и качество иллюстративных предложений</span><span data-lang="en">Presence and quality of illustrative sentences</span></div>
+    </div>
+    <div class="criterion-card">
+      <div class="criterion-num">C — 04</div>
+      <div class="criterion-title"><span data-lang="ru">Исключения и типичные ошибки</span><span data-lang="en">Exceptions and Typical Mistakes</span></div>
+      <div class="criterion-desc"><span data-lang="ru">Охват тонких случаев употребления и распространённых ошибок учащихся</span><span data-lang="en">Coverage of edge cases and common learner errors</span></div>
+    </div>
+    <div class="criterion-card">
+      <div class="criterion-num">C — 05</div>
+      <div class="criterion-title"><span data-lang="ru">Качество заданий</span><span data-lang="en">Quality of Assignments</span></div>
+      <div class="criterion-desc"><span data-lang="ru">Практическая ценность предложенных упражнений</span><span data-lang="en">Practical value of suggested practice exercises</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2><span data-lang="ru">Результаты по темам</span><span data-lang="en">Results by Topic</span></h2>
+  </div>
+
+  <p><span data-lang="ru">Ниже приведены детальные оценки по каждой теме. Снижение балла указывает на конкретный недостаток, зафиксированный в ходе анализа.</span><span data-lang="en">Detailed scores for each topic are presented below. Score reductions indicate specific deficiencies identified during analysis.</span></p>
+
+  <!-- TABLE 1 -->
+  <h3 style="margin-top: 2.5rem;">Present Perfect</h3>
+  <div class="table-wrapper">
+    <table class="score-table">
+      <thead>
+        <tr>
+          <th><span data-lang="ru">Модель</span><span data-lang="en">Model</span></th>
+          <th>C-01</th><th>C-02</th><th>C-03</th><th>C-04</th><th>C-05</th>
+          <th><span data-lang="ru">Итог</span><span data-lang="en">Total</span></th>
+          <th><span data-lang="ru">Примечание</span><span data-lang="en">Note</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="ai-name">ChatGPT</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Отсутствуют примеры с <em>for</em> и <em>since</em></span><span data-lang="en">No examples with <em>for</em> and <em>since</em></span></td></tr>
+        <tr><td class="ai-name">DeepSeek</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Отсутствуют примеры с <em>for</em> и <em>since</em></span><span data-lang="en">No examples with <em>for</em> and <em>since</em></span></td></tr>
+        <tr><td class="ai-name">Gemini</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Усложнённая лексика, перегруженная формулировка</span><span data-lang="en">Complex vocabulary, overloaded phrasing</span></td></tr>
+        <tr><td class="ai-name">Claude</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Перегруженная формулировка</span><span data-lang="en">Overloaded phrasing</span></td></tr>
+        <tr><td class="ai-name">Perplexity</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Усложнённая лексика</span><span data-lang="en">Complex vocabulary</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABLE 2 -->
+  <h3 style="margin-top: 3rem;">Reported Speech</h3>
+  <div class="table-wrapper">
+    <table class="score-table">
+      <thead>
+        <tr>
+          <th><span data-lang="ru">Модель</span><span data-lang="en">Model</span></th>
+          <th>C-01</th><th>C-02</th><th>C-03</th><th>C-04</th><th>C-05</th>
+          <th><span data-lang="ru">Итог</span><span data-lang="en">Total</span></th>
+          <th><span data-lang="ru">Примечание</span><span data-lang="en">Note</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="ai-name">ChatGPT</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Отсутствуют иллюстративные примеры</span><span data-lang="en">Missing illustrative examples</span></td></tr>
+        <tr><td class="ai-name">DeepSeek</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Отсутствуют примеры изменения времени и мест</span><span data-lang="en">No examples of tense and place backshift</span></td></tr>
+        <tr><td class="ai-name">Gemini</td><td class="score-cell score-reduced">1</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total">8/10</td><td class="note-cell"><span data-lang="ru">Усложнённая лексика; неполные формулы для негативных / вопросительных предложений</span><span data-lang="en">Complex vocabulary; incomplete formulas for negative/interrogative forms</span></td></tr>
+        <tr><td class="ai-name">Claude</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Отсутствуют иллюстративные примеры</span><span data-lang="en">Missing illustrative examples</span></td></tr>
+        <tr><td class="ai-name" style="color: var(--gold);">Perplexity ★</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total" style="color: var(--gold);">10/10</td><td class="note-cell"><span data-lang="ru">Полный балл</span><span data-lang="en">Perfect score</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABLE 3 -->
+  <h3 style="margin-top: 3rem;">Passive Voice</h3>
+  <div class="table-wrapper">
+    <table class="score-table">
+      <thead>
+        <tr>
+          <th><span data-lang="ru">Модель</span><span data-lang="en">Model</span></th>
+          <th>C-01</th><th>C-02</th><th>C-03</th><th>C-04</th><th>C-05</th>
+          <th><span data-lang="ru">Итог</span><span data-lang="en">Total</span></th>
+          <th><span data-lang="ru">Примечание</span><span data-lang="en">Note</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="ai-name">ChatGPT</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Нет примеров для переходных глаголов</span><span data-lang="en">No examples for transitive verbs</span></td></tr>
+        <tr><td class="ai-name">DeepSeek</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Нет примеров для непереходных глаголов</span><span data-lang="en">No examples for intransitive verbs</span></td></tr>
+        <tr><td class="ai-name" style="color: var(--gold);">Gemini ★</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total" style="color: var(--gold);">10/10</td><td class="note-cell"><span data-lang="ru">Полный балл</span><span data-lang="en">Perfect score</span></td></tr>
+        <tr><td class="ai-name">Claude</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-total">8/10</td><td class="note-cell"><span data-lang="ru">Усложнённая лексика; нет примеров для непереходных глаголов</span><span data-lang="en">Complex vocabulary; no examples for intransitive verbs</span></td></tr>
+        <tr><td class="ai-name">Perplexity</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Усложнённая лексика</span><span data-lang="en">Complex vocabulary</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABLE 4 -->
+  <h3 style="margin-top: 3rem;">Conditionals (If / Wish)</h3>
+  <div class="table-wrapper">
+    <table class="score-table">
+      <thead>
+        <tr>
+          <th><span data-lang="ru">Модель</span><span data-lang="en">Model</span></th>
+          <th>C-01</th><th>C-02</th><th>C-03</th><th>C-04</th><th>C-05</th>
+          <th><span data-lang="ru">Итог</span><span data-lang="en">Total</span></th>
+          <th><span data-lang="ru">Примечание</span><span data-lang="en">Note</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="ai-name">ChatGPT</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-total">8/10</td><td class="note-cell"><span data-lang="ru">Неполные формулы для Wish (present situations) и Wish (past situations / regrets); нет упоминания типичных ошибок</span><span data-lang="en">Incomplete formulas for Wish (present situations) and Wish (past situations / regrets); no mention of typical errors</span></td></tr>
+        <tr><td class="ai-name" style="color: var(--gold);">DeepSeek ★</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total" style="color: var(--gold);">10/10</td><td class="note-cell"><span data-lang="ru">Полный балл</span><span data-lang="en">Perfect score</span></td></tr>
+        <tr><td class="ai-name" style="color: var(--gold);">Gemini ★</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total" style="color: var(--gold);">10/10</td><td class="note-cell"><span data-lang="ru">Полный балл</span><span data-lang="en">Perfect score</span></td></tr>
+        <tr><td class="ai-name" style="color: var(--gold);">Claude ★</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total" style="color: var(--gold);">10/10</td><td class="note-cell"><span data-lang="ru">Полный балл</span><span data-lang="en">Perfect score</span></td></tr>
+        <tr><td class="ai-name" style="color: var(--gold);">Perplexity ★</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total" style="color: var(--gold);">10/10</td><td class="note-cell"><span data-lang="ru">Полный балл</span><span data-lang="en">Perfect score</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABLE 5 -->
+  <h3 style="margin-top: 3rem;">Modal Verbs: Can / Could / Be Able To</h3>
+  <div class="table-wrapper">
+    <table class="score-table">
+      <thead>
+        <tr>
+          <th><span data-lang="ru">Модель</span><span data-lang="en">Model</span></th>
+          <th>C-01</th><th>C-02</th><th>C-03</th><th>C-04</th><th>C-05</th>
+          <th><span data-lang="ru">Итог</span><span data-lang="en">Total</span></th>
+          <th><span data-lang="ru">Примечание</span><span data-lang="en">Note</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="ai-name">ChatGPT</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Нет примеров с <em>could</em> и <em>was/were able to</em></span><span data-lang="en">No examples with <em>could</em> and <em>was/were able to</em></span></td></tr>
+        <tr><td class="ai-name">DeepSeek</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Отсутствует формула для отрицательных предложений</span><span data-lang="en">No formula for negative sentences</span></td></tr>
+        <tr><td class="ai-name">Gemini</td><td class="score-cell score-reduced">1</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total">8/10</td><td class="note-cell"><span data-lang="ru">Усложнённая лексика; недостаточно ясные формулы</span><span data-lang="en">Complex vocabulary; unclear formulas</span></td></tr>
+        <tr><td class="ai-name" style="color: var(--gold);">Claude ★</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total" style="color: var(--gold);">10/10</td><td class="note-cell"><span data-lang="ru">Полный балл</span><span data-lang="en">Perfect score</span></td></tr>
+        <tr><td class="ai-name">Perplexity</td><td class="score-cell score-full">2</td><td class="score-cell score-reduced">1</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-full">2</td><td class="score-cell score-total">9/10</td><td class="note-cell"><span data-lang="ru">Нет формул для отрицательных и вопросительных предложений</span><span data-lang="en">No formulas for negative and interrogative sentences</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- FINAL RANKINGS -->
+<section id="findings">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2><span data-lang="ru">Итоговый рейтинг</span><span data-lang="en">Overall Rankings</span></h2>
+  </div>
+
+  <p><span data-lang="ru">Совокупные баллы по всем пяти темам формируют итоговый рейтинг. Разрыв между первым и последним местом составил лишь 3 балла, что свидетельствует о высоком общем уровне всех исследованных моделей.</span><span data-lang="en">Cumulative scores across all five topics determine the final ranking. The gap between first and last place is only 3 points, indicating a uniformly high standard across all models studied.</span></p>
+
+  <div class="rankings">
+    <div class="rank-row rank-1">
+      <div class="rank-position">I</div>
+      <div>
+        <div class="rank-ai">Perplexity AI</div>
+        <div style="font-size:0.82rem; color: var(--gold); margin-top:2px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.05em;"><span data-lang="ru">Лидер по стабильности в критериях C-01 и C-04</span><span data-lang="en">Leader in consistency across C-01 and C-04</span></div>
+      </div>
+      <div class="rank-score">47 / 50 · 9.4</div>
+      <div class="rank-bar-wrap"><div class="rank-bar" style="width: 94%"></div></div>
+    </div>
+    <div class="rank-row">
+      <div class="rank-position" style="color: var(--ink-soft)">II</div>
+      <div>
+        <div class="rank-ai">DeepSeek</div>
+        <div style="font-size:0.82rem; color: var(--ink-faint); margin-top:2px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.05em;"><span data-lang="ru">Структурность, диалоговость объяснений</span><span data-lang="en">Structured and dialogic explanations</span></div>
+      </div>
+      <div class="rank-score">46 / 50 · 9.2</div>
+      <div class="rank-bar-wrap"><div class="rank-bar" style="width: 92%; background: var(--ink-soft)"></div></div>
+    </div>
+    <div class="rank-row">
+      <div class="rank-position" style="color: var(--ink-soft)">II</div>
+      <div>
+        <div class="rank-ai">Claude</div>
+        <div style="font-size:0.82rem; color: var(--ink-faint); margin-top:2px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.05em;"><span data-lang="ru">Развёрнутые и детальные объяснения</span><span data-lang="en">Detailed and thorough explanations</span></div>
+      </div>
+      <div class="rank-score">46 / 50 · 9.2</div>
+      <div class="rank-bar-wrap"><div class="rank-bar" style="width: 92%; background: var(--ink-soft)"></div></div>
+    </div>
+    <div class="rank-row">
+      <div class="rank-position" style="color: var(--rule)">III</div>
+      <div>
+        <div class="rank-ai">Gemini</div>
+        <div style="font-size:0.82rem; color: var(--ink-faint); margin-top:2px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.05em;"><span data-lang="ru">Силён в объёмных темах, лексические сложности на B1</span><span data-lang="en">Strong on complex topics; occasional B2+ vocabulary</span></div>
+      </div>
+      <div class="rank-score">45 / 50 · 9.0</div>
+      <div class="rank-bar-wrap"><div class="rank-bar" style="width: 90%; background: var(--rule)"></div></div>
+    </div>
+    <div class="rank-row">
+      <div class="rank-position" style="color: var(--rule)">IV</div>
+      <div>
+        <div class="rank-ai">ChatGPT</div>
+        <div style="font-size:0.82rem; color: var(--ink-faint); margin-top:2px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.05em;"><span data-lang="ru">Склонен к уровню B2/C1; избыточная детализация</span><span data-lang="en">Tendency toward B2/C1 level; informational overload</span></div>
+      </div>
+      <div class="rank-score">44 / 50 · 8.8</div>
+      <div class="rank-bar-wrap"><div class="rank-bar" style="width: 88%; background: var(--rule)"></div></div>
+    </div>
+  </div>
+
+  <!-- KEY FINDINGS -->
+  <h3 style="margin-top: 3.5rem;"><span data-lang="ru">Ключевые выводы</span><span data-lang="en">Key Findings</span></h3>
+
+  <div class="findings-list">
+    <div class="finding-item">
+      <div class="finding-num">01</div>
+      <div class="finding-text">
+        <span data-lang="ru"><strong>Perplexity AI</strong> занял первое место (47/50), продемонстрировав наибольшую стабильность в критерии C-04 («Исключения»). Именно эта модель наиболее корректно разграничила тонкие случаи употребления <em>could</em> vs. <em>was/were able to</em> и дала наиболее выверенные правила согласования времён в Reported Speech, близкие к эталону Р. Мёрфи.</span>
+        <span data-lang="en"><strong>Perplexity AI</strong> ranked first (47/50), showing the greatest consistency in criterion C-04 (Exceptions). It most precisely distinguished the subtle contrast between <em>could</em> and <em>was/were able to</em>, and provided the most accurate rules for tense backshift in Reported Speech, closely aligned with R. Murphy's standard.</span>
+      </div>
+    </div>
+    <div class="finding-item">
+      <div class="finding-num">02</div>
+      <div class="finding-text">
+        <span data-lang="ru"><strong>DeepSeek</strong> и <strong>Claude</strong> разделили второе место (46/50). Отрыв от лидера в 1 балл статистически незначим в рамках данной выборки. Обе модели рекомендуются учащимся, предпочитающим развёрнутые диалоговые объяснения.</span>
+        <span data-lang="en"><strong>DeepSeek</strong> and <strong>Claude</strong> tied for second place (46/50). The 1-point gap from the leader is statistically negligible within this sample size. Both models are recommended for learners who prefer detailed, dialogic explanations.</span>
+      </div>
+    </div>
+    <div class="finding-item">
+      <div class="finding-num">03</div>
+      <div class="finding-text">
+        <span data-lang="ru"><strong>Gemini</strong> (45/50) хорошо справляется с объёмными темами — Passive Voice и Conditionals, — однако в критерии C-01 («Понятность») регулярно превышает уровень B1.</span>
+        <span data-lang="en"><strong>Gemini</strong> (45/50) excels at complex topics such as Passive Voice and Conditionals, but regularly exceeds B1 level in criterion C-01 (Clarity).</span>
+      </div>
+    </div>
+    <div class="finding-item">
+      <div class="finding-num">04</div>
+      <div class="finding-text">
+        <span data-lang="ru"><strong>ChatGPT</strong> (44/50) склонен к нюансам уровня B2/C1, что создаёт избыточный «информационный шум» для учащихся уровня B1.</span>
+        <span data-lang="en"><strong>ChatGPT</strong> (44/50) tends toward B2/C1-level nuances, creating informational overload for B1 learners.</span>
+      </div>
+    </div>
+    <div class="finding-item">
+      <div class="finding-num">05</div>
+      <div class="finding-text">
+        <span data-lang="ru">Наиболее проблемным критерием для всех моделей оказался <strong>C-04 («Исключения и типичные ошибки»)</strong>: большинство систем либо опускали отдельные случаи употребления, либо не разграничивали тонкие смысловые различия.</span>
+        <span data-lang="en">Criterion <strong>C-04 (Exceptions and Typical Mistakes)</strong> proved the most challenging across all models: most systems either omitted certain usage cases or failed to distinguish subtle semantic differences.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<footer>
+  <div class="footer-note">
+    <span data-lang="ru">Научно-исследовательская работа<br>Уровень: B1 · CEFR</span>
+    <span data-lang="en">Academic Research Paper<br>Level: B1 · CEFR</span>
+  </div>
+  <div class="footer-note" style="text-align: right;">
+    <span data-lang="ru">Оценено: 5 моделей · 5 тем · 50 баллов max</span>
+    <span data-lang="en">Evaluated: 5 models · 5 topics · 50 pts max</span>
+  </div>
+</footer>
+
+<script>
+  function setLang(lang) {
+    document.body.classList.toggle('en', lang === 'en');
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+    });
+  }
+
+  // Scroll-triggered fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('section').forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
